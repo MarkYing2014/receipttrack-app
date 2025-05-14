@@ -1,37 +1,12 @@
-import { Inngest } from "inngest";
+// inngest.config.ts
+import { Inngest } from 'inngest';
 
-// Initialize Inngest client
-export const inngest = new Inngest({
-  id: "receipt-tracker",
-  // For development, we'll use the testing environment
-  // In production, you would use your Inngest API key
-  env: process.env.NODE_ENV === "production" 
-    ? undefined  // Uses INNGEST_* env vars in production
-    : { 
-        signing: { 
-          key: process.env.INNGEST_SIGNING_KEY || "dev" 
-        }
-      }
+// Create Inngest client with explicit configuration
+export const inngest = new Inngest({ 
+  id: 'receipttrack-app',
+  // These can be empty during local development with the dev server
+  // The dev server will provide ephemeral keys
 });
 
-// Define event schemas (for type-safety)
-export type ReceiptEvents = {
-  "receipt/created": {
-    data: {
-      receiptId: string;
-      amount: number;
-      date: string;
-      merchant: string;
-      category: string;
-      description?: string;
-      imageUrl?: string;
-    };
-  };
-  "receipt/processed": {
-    data: {
-      receiptId: string;
-      status: "success" | "failure";
-      message?: string;
-    };
-  };
-};
+// Export the client to ensure it's accessible
+export default inngest;
