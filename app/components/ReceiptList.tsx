@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { formatDistance } from 'date-fns';
+import NoHydration from './NoHydration';
 
-// Helper function to format currency
+// Helper function to format currency - will only be used client-side
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -13,7 +14,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount);
 };
 
-// Helper function to format dates
+// Helper function to format dates - will only be used client-side
 const formatDate = (dateString: string) => {
   try {
     const date = new Date(dateString);
@@ -88,6 +89,12 @@ const ReceiptList = () => {
   }
   
   return (
+    <NoHydration fallback={
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <h2 className="text-xl font-semibold mb-4">Your Receipts</h2>
+        <p>Loading receipts...</p>
+      </div>
+    }>
     <div className="bg-white shadow-md rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Your Receipts</h2>
       
@@ -165,6 +172,7 @@ const ReceiptList = () => {
         </div>
       )}
     </div>
+    </NoHydration>
   );
 };
 

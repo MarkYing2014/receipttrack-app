@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import NoHydration from './NoHydration';
 
 const ReceiptForm = () => {
   // Form state
   const [formData, setFormData] = useState({
     description: '',
     amount: '',
-    date: new Date().toISOString().split('T')[0], // Default to today
+    date: '', // Will be set properly client-side
     merchant: '',
     category: '',
   });
@@ -30,8 +31,11 @@ const ReceiptForm = () => {
     }));
   };
   
-  // Local event processing is used for receipt events
-
+    // Set the date on the client side only
+  const todayDate = () => {
+    return new Date().toISOString().split('T')[0];
+  };
+  
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,8 +110,14 @@ const ReceiptForm = () => {
   };
   
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-      <h2 className="text-xl font-semibold mb-4">Add New Receipt</h2>
+    <NoHydration fallback={
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-4">Add New Receipt</h2>
+        <p>Loading form...</p>
+      </div>
+    }>
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h2 className="text-xl font-semibold mb-4">Add New Receipt</h2>
       
       {status === 'success' && (
         <div className="bg-green-100 text-green-700 p-3 rounded mb-4">
@@ -135,7 +145,7 @@ const ReceiptForm = () => {
               value={formData.merchant}
               onChange={handleChange}
               required
-              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder:text-gray-500"
               placeholder="Store or vendor name"
             />
           </div>
@@ -154,7 +164,7 @@ const ReceiptForm = () => {
               required
               min="0.01"
               step="0.01"
-              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder:text-gray-500"
               placeholder="0.00"
             />
           </div>
@@ -168,10 +178,10 @@ const ReceiptForm = () => {
               type="date"
               id="date"
               name="date"
-              value={formData.date}
+              value={formData.date || todayDate()}
               onChange={handleChange}
               required
-              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder:text-gray-500"
             />
           </div>
           
@@ -185,7 +195,7 @@ const ReceiptForm = () => {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder:text-gray-500"
             >
               <option value="">Select a category</option>
               <option value="Food">Food</option>
@@ -211,7 +221,7 @@ const ReceiptForm = () => {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2 border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder:text-gray-500"
             placeholder="Optional details about this purchase"
           />
         </div>
@@ -228,6 +238,7 @@ const ReceiptForm = () => {
         </button>
       </form>
     </div>
+    </NoHydration>
   );
 };
 
